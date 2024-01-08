@@ -104,18 +104,59 @@ th {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 400px; 
+    max-width: 400px;
     width: 100%;
     padding: 20px;
-    background-color: white; 
+    background-color: white;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
 }
 
 .titulo-agregar {
-    display: flex;
-    justify-content: center;
+    text-align: center;
+    font-size: 20px;
     margin-bottom: 20px;
+}
 
+/* Estilos del formulario dentro del formulario flotante */
+.formulario label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.formulario .control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.formulario .select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.formulario button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.productos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Espacio entre productos */
+}
+
+.producto {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espacio entre campos */
 }
