@@ -40,14 +40,16 @@ header {
 }
 
 nav {
-    width: 200px;
+    width: 100%;
     background-color: #f1f1f1;
     padding: 10px;
     border-right: 1px solid #ddd;
+    position: relative;
+    z-index: 1;
 }
 
 nav a {
-    display: block;
+    display: inline-block;
     padding: 10px;
     text-decoration: none;
     color: #333;
@@ -64,6 +66,7 @@ section {
     flex: 1;
     padding: 20px;
     position: relative;
+    z-index: 0;
 }
 
 table {
@@ -104,7 +107,7 @@ th {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 400px;
+    max-width: 1500px;
     width: 100%;
     padding: 20px;
     background-color: white;
@@ -145,18 +148,41 @@ th {
     padding: 10px 15px;
     border: none;
     cursor: pointer;
-    width: 100%;
+    width: 30%;
     border-radius: 4px;
-}
-
-.productos-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px; /* Espacio entre productos */
 }
 
 .producto {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Espacio entre campos */
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.productos-container {
+    max-height: 480px; 
+    overflow-y: auto;
+}
+
+.eliminarProducto {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    height: 40px;
+    width: 40px;
+}
+
+.eliminarProducto-container {
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
 }
