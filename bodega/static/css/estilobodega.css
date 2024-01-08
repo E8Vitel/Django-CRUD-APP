@@ -20,12 +20,12 @@ header {
     width: 300px;
 }
 
-.historial {
+.navIndex {
     margin-left: 20px;
     position: relative;
 }
 
-.historial a {
+.navIndex a {
     text-decoration: none;
     color: #333;
     position: relative;
@@ -34,7 +34,7 @@ header {
     margin-right: 20px;
 }
 
-.historial a:hover {
+.navIndex a:hover {
     background-color: #ddd;
     color: #000;
 }

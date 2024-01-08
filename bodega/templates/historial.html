@@ -12,12 +12,21 @@
 </head>
 <body>
 
-    <header>
+    <header class="logo2">
         <div>
             <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
         </div>
-        <div class="historial">
+        <div class="navIndex">
+            <a href="/bodega/productos">Inicio</a>
+        </div>
+        <div class="navIndex">
+            <a href="unidades">Unidades</a>
+        </div>
+        <div class="navIndex">
             <a href="historial">Historial</a>
+        </div>
+        <div class="navIndex">
+            <a href="login">Cerrar sesión</a>
         </div>
     </header>
 
@@ -25,24 +34,19 @@
         <h2>Historial de Salidas</h2>
         
         <ul>
+            {% for historiales in historial %}
             <li>
-                <span>Salida: 2022-01-15</span>
-                <span>Receptor: Juan Perez</span>
+                
+                <span>{{ historiales.fecha }}</span>
+                <span>{{ historiales.receptor.nombre_receptor }}</span>
                 <ul>
-                    <li>Producto 1</li>
-                    <li>Producto 2</li>
+                    {{ historiales.cantidad}}
+                    <li>{{ historiales.producto_id.nombre_producto }}</li>
                 </ul>
                 <button class="eliminar">Eliminar</button>
+                
             </li>
-
-            <li>
-                <span>Salida: 2022-01-16</span>
-                <span>Receptor: Maria Rodriguez</span>
-                <ul>
-                    <li>Producto 3</li>
-                </ul>
-                <button class="eliminar">Eliminar</button>
-            </li>
+            {% endfor %}
         </ul>
     </section>
 

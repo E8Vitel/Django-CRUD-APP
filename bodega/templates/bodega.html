@@ -16,16 +16,26 @@
         <div>
             <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
         </div>
-        <div class="historial">
+        <div class="navIndex">
+            <a href="/bodega/productos">Inicio</a>
+        </div>
+        <div class="navIndex">
+            <a href="unidades">Unidades</a>
+        </div>
+        <div class="navIndex">
             <a href="historial">Historial</a>
+        </div>
+        <div class="navIndex">
+            <a href="login">Cerrar sesión</a>
         </div>
     </header>
 
+    
     <nav>
-        <a href="#">Todo</a>
-        <a href="#">Medicamentos</a>
-        <a href="#">Insumos</a>
-        <a href="#">Artículos de Aseo</a>
+        <a href="?categoria=todo">Todo</a>
+        {% for categoria in categorias %}
+            <a href="?categoria={{ categoria.id }}" {% if categoria.id == categoria_filter %}class="active"{% endif %}>{{ categoria.nombre_categoria }}</a>
+        {% endfor %}
     </nav>
 
     <section>

@@ -6,12 +6,20 @@ def view_login(request):
     return render(request, 'index.html')
 
 def view_historial(request):
-    return render(request, 'historial.html')
+    historial = DetalleHistorial.objects.all()
+    return render(request, 'historial.html', {'historial': historial})
 
 def view_productos(request):
     categorias = Categoria.objects.all()
-    productos = Producto.objects.all()
-    return render(request, 'bodega.html', {'categorias': categorias, 'productos': productos})
+    categoria_filter = request.GET.get('categoria', 'todo')
+
+    if categoria_filter != 'todo':
+        productos = Producto.objects.filter(categoria_id=categoria_filter)
+    else:
+        productos = Producto.objects.all()
+
+    return render(request, 'bodega.html', {'categorias': categorias, 'productos': productos, 'categoria_filter': categoria_filter})
+
 
 def create_producto(request):
     if request.method == 'POST':
