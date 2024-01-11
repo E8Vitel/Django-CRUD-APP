@@ -18,10 +18,13 @@ class Producto(models.Model):
 class Unidad(models.Model): 
     nombre_Unidad = models.CharField(max_length=255)
 
-class DetalleHistorial(models.Model):
+class Historial(models.Model):
     fecha = models.DateTimeField()
+    receptor = models.ForeignKey(Unidad, on_delete=models.SET_NULL, null=True, blank=True)
+    productos = models.ManyToManyField(Producto, through='DetallesHistorial')
+
+class DetallesHistorial(models.Model):
+    historial = models.ForeignKey(Historial, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
     precio_unitario = models.FloatField()
-    producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    Unidad = models.ForeignKey(Unidad, null=True, blank=True, on_delete=models.CASCADE)
-

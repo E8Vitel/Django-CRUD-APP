@@ -1,13 +1,15 @@
+from gettext import translation
 from django.shortcuts import redirect, render
-from .models import Producto, Categoria, DetalleHistorial
+from .models import Producto, Categoria, Historial, DetallesHistorial
 from datetime import datetime
 # Create your views here.
 def view_login(request):
     return render(request, 'index.html')
 
 def view_historial(request):
-    historial = DetalleHistorial.objects.all()
-    return render(request, 'historial.html', {'historial': historial})
+    historiales = Historial.objects.all()
+    context = {'historiales': historiales}
+    return render(request, 'historial.html', context)
 
 def view_productos(request):
     categorias = Categoria.objects.all()
@@ -29,24 +31,28 @@ def create_producto(request):
         cantidades = request.POST.getlist('cantidad[]')
         categorias_ids = request.POST.getlist('categoria[]')
 
-        productos_creados = 0
+        # Create a new Historial object only once
+        historial = Historial.objects.create(fecha=datetime.now())
+
         for nombre, descripcion, precio, cantidad, categoria_id in zip(nombres, descripciones, precios, cantidades, categorias_ids):
+            categoria = Categoria.objects.get(id=categoria_id)
+            producto = Producto.objects.create(
+                nombre_producto=nombre,
+                descripcion=descripcion,
+                precio=float(precio),
+                stock=int(cantidad),
+                categoria=categoria
+            )
 
-                categoria = Categoria.objects.get(id=categoria_id)
-                producto = Producto.objects.create(
-                    nombre_producto=nombre,
-                    descripcion=descripcion,
-                    precio=float(precio),
-                    stock=int(cantidad),
-                    categoria=categoria
-                )
-                DetalleHistorial.objects.create(
-                    fecha=datetime.now(),
-                    cantidad=producto.stock,
-                    precio_unitario=producto.precio,
-                    producto_id=producto
-                )
-                productos_creados += 1
+            # Associate the product with the previously created Historial
+            DetallesHistorial.objects.create(
+                historial=historial,
+                producto=producto,
+                cantidad=producto.stock,
+                precio_unitario=producto.precio
+            )
 
+        # Redirect to the page after all products are processed
         return redirect('/bodega/productos')
+
     return render(request, 'bodega.html')

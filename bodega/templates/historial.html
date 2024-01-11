@@ -31,20 +31,18 @@
     </header>
 
     <section>
-        <h2>Historial de Salidas</h2>
+        <h2>Historial</h2>
         
         <ul>
-            {% for historiales in historial %}
+            {% for historial in historiales %}
             <li>
-                
-                <span>{{ historiales.fecha }}</span>
-                <span>{{ historiales.receptor.nombre_receptor }}</span>
+                <span>{{ historial.fecha }}</span>
                 <ul>
-                    {{ historiales.cantidad}}
-                    <li>{{ historiales.producto_id.nombre_producto }}</li>
+                    {% for detalle in historial.detalleshistorial_set.all %}
+                        <li>{{ detalle.producto.nombre_producto }} - Cantidad: {{ detalle.cantidad }} - Precio Unitario: {{ detalle.precio_unitario }}</li>
+                    {% endfor %}
                 </ul>
                 <button class="eliminar">Eliminar</button>
-                
             </li>
             {% endfor %}
         </ul>

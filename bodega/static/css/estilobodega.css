@@ -68,26 +68,33 @@ section {
     position: relative;
     z-index: 0;
 }
-
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-left: 20px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+    margin-top: 20px;
 }
 
 th {
-    background-color: #333;
-    color: white;
+    padding: 10px;
+    text-align: left;
+    background-color: #f2f2f2;
+}
+
+td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+td.stock, td.precio {
+    width: 50px;
+}
+
+td.descripcion {
+    width: 500px;
 }
 
 .floating-button {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     right: 20px;
     background-color: #4CAF50;
@@ -99,6 +106,7 @@ th {
     font-size: 14px;
     cursor: pointer;
     border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
 #formularioAgregar {
@@ -186,3 +194,4 @@ th {
     align-items: center;
     margin-right: 5px;
 }
+
