@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/estilobodega.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <title>Gestor de Bodega</title>
 </head>
 <body>
@@ -17,7 +18,7 @@
             <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
         </div>
         <div class="navIndex">
-            <a href="/bodega/productos">Inicio</a>
+            <a href="productos">Inicio</a>
         </div>
         <div class="navIndex">
             <a href="unidades">Unidades</a>
@@ -47,110 +48,54 @@
                     <th scope="col">Producto</th>
                     <th scope="col">Descripción</th>
                     <th scope="col">Stock</th>
-                    <th scope="col">Precio</th>
+                    <th scope="col">Precio Unitario</th>
+                    <th scope="col">Precio Total</th>
                     <th scope="col">Categoría</th>
+                    <th scope="col">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for producto in productos %}
-                <tr>
+                <tr id="fila{{ forloop.counter }}">
                     <td>{{ producto.nombre_producto }}</td>
                     <td>{{ producto.descripcion }}</td>
-                    <td>{{ producto.stock }}</td>
-                    <td>{{ producto.precio }}</td>
-                    <td>{{ producto.categoria.nombre_categoria }}</td>
+                    <td>
+                        {% if producto.stock < 10 %}
+                        <div class="bajo-stock">
+                            <span>{{ producto.stock }}</span>
+                        </div>    
+                        {% else %}
+                            {{ producto.stock }}
+                        {% endif %}
+                    </td>
+                    <td>{{ producto.precio|floatformat:0 }}</td>
+                    <td>{{ producto.precio_total|floatformat:0 }}</td>
+                    <td>{{ producto.categoria.nombre_categoria }}</td> 
+                    <td>
+                        <button class="btn-editar" data-fila="{{ forloop.counter }}">Editar</button>
+                        <button>X</button>
+                    </td> 
                 </tr>
+
                 {% endfor %}
             </tbody>
         </table>
     </div>
     
-    <button class="floating-button" id="mostrarFormulario">Agregar Producto</button>
-    
-    <div class="formulario" id="formularioAgregar">
-        <h1 class="titulo-agregar">Agregar productos</h1>
-        <hr class="separador">
-        <form action="/bodega/productos/" method="POST">
-            {% csrf_token %}
-            <div class="productos-container">
-                <div class="producto">
-                    <div class="mb-3">
-                        <label for="nombreProducto1" class="form-label">Nombre del Producto</label>
-                        <input type="text" class="form-control" id="nombreProducto1" name="nombreProducto[]" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="descripcion1" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="descripcion1" name="description[]" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="precio1" class="form-label">Precio</label>
-                        <input type="number" class="form-control" id="precio1" name="precio[]" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cantidad1" class="form-label">Cantidad</label>
-                        <input type="number" class="form-control" id="cantidad1" name="cantidad[]" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="categoria1" class="form-label">Categoría</label>
-                        <select class="form-select" id="categoria1" name="categoria[]" required>
-                            <option value="select-categoria">--Seleccione una categoria--</option>
-                            {% for categoria in categorias %}
-                                <option value="{{ categoria.id }}">{{ categoria.nombre_categoria }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-    
-            <button type="button" id="agregarProducto">Agregar Otro Producto</button>
-            <button type="submit" class="btn btn-primary">Agregar Productos</button>
-        </form>
+    <div class="dropdown">
+        <button class="floating-button dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Opciones
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="crear/nuevo">Agregar Producto</a></li>
+            <li><a class="dropdown-item" href="crear/existente">Agregar Producto Existente</a></li>
+            <li><a class="dropdown-item" href="crear/salida">Registrar Salida de Producto</a></li>
+        </ul>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Ocultar el formulario al inicio
-            $("#formularioAgregar").hide();
-    
-            // Mostrar el formulario flotante al hacer clic en el botón
-            $("#mostrarFormulario").click(function () {
-                $("#formularioAgregar").fadeIn();
-            });
-    
-            // Ocultar el formulario flotante al hacer clic en cualquier lugar fuera de él
-            $(document).mouseup(function (e) {
-                var formulario = $("#formularioAgregar");
-                if (!formulario.is(e.target) && formulario.has(e.target).length === 0) {
-                    formulario.hide();
-                }
-            });
-    
-            var contadorProductos = 1;
-    
-            $("#agregarProducto").click(function () {
-                contadorProductos++;
-                var nuevoProducto = $(".producto:first").clone();
-                nuevoProducto.find("input, select").val("");
-                nuevoProducto.find("label[for^='nombreProducto']").attr("for", "nombreProducto" + contadorProductos);
-                nuevoProducto.find("input[id^='nombreProducto']").attr("id", "nombreProducto" + contadorProductos);
-                nuevoProducto.find("label[for^='precio']").attr("for", "precio" + contadorProductos);
-                nuevoProducto.find("input[id^='precio']").attr("id", "precio" + contadorProductos);
-                nuevoProducto.find("label[for^='cantidad']").attr("for", "cantidad" + contadorProductos);
-                nuevoProducto.find("input[id^='cantidad']").attr("id", "cantidad" + contadorProductos);
-                nuevoProducto.find("label[for^='categoria']").attr("for", "categoria" + contadorProductos);
-                nuevoProducto.find("select[id^='categoria']").attr("id", "categoria" + contadorProductos);
-
-                nuevoProducto.append('<span class="eliminarProducto" onclick="eliminarProducto(this)">-</span>');
-                
-                nuevoProducto.appendTo(".productos-container");
-            });
-
-            eliminarProducto = function (elemento) {
-            $(elemento).closest('.producto').remove();
-            };
-        });
-    </script>
+    <script src="{% static 'js/bodega.js' %}"></script>
 </body>
 </html>
