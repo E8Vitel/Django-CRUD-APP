@@ -12,12 +12,18 @@ class Producto(models.Model):
     nombre_producto = models.TextField(max_length=255)
     descripcion = models.TextField(max_length=255, null=True, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null=False, blank=False)
-    stock = models.IntegerField()
-    precio = models.FloatField()
+    cantidad = models.IntegerField(null=True, blank=True)
+    precio = models.FloatField(null=True, blank=True)
+
+
+
+class CategoriaUnidad(models.Model):
+    categoria_unidad = models.CharField(max_length=255)
 
 class Unidad(models.Model): 
     nombre_Unidad = models.CharField(max_length=255)
-
+    categoria_unidad = models.ForeignKey(CategoriaUnidad, on_delete=models.CASCADE, null=False, blank=False)
+                                         
 class Historial(models.Model):
     fecha = models.DateTimeField()
     receptor = models.ForeignKey(Unidad, on_delete=models.SET_NULL, null=True, blank=True)

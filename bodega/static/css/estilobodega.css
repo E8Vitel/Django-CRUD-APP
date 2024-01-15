@@ -62,3 +62,7 @@ td.descripcion {
     background-color: #ff9999;
     font-weight: bold; 
 }
+
+.producto-modificado {
+    background-color: #bafffc; /* Cambia esto al color que desees para resaltar */
+}

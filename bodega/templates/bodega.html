@@ -56,16 +56,16 @@
             </thead>
             <tbody>
                 {% for producto in productos %}
-                <tr id="fila{{ forloop.counter }}">
+                <tr id="fila{{ forloop.counter }}" {% if producto.id == producto_modificado_id %}class="producto-modificado"{% endif %}>
                     <td>{{ producto.nombre_producto }}</td>
                     <td>{{ producto.descripcion }}</td>
                     <td>
-                        {% if producto.stock < 10 %}
+                        {% if producto.cantidad < 10 %}
                         <div class="bajo-stock">
-                            <span>{{ producto.stock }}</span>
+                            <span>{{ producto.cantidad }}</span>
                         </div>    
                         {% else %}
-                            {{ producto.stock }}
+                            {{ producto.cantidad }}
                         {% endif %}
                     </td>
                     <td>{{ producto.precio|floatformat:0 }}</td>

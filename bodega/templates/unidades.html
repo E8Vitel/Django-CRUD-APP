@@ -34,5 +34,23 @@
         </div>
     </header>
 
+    <form action="{% url 'salida_producto' %}" method="POST">
+        <div class="mb-3">
+            <label for="unidad" class="form-label">Unidad</label>
+            <input type="text" class="form-control" id="precio" name="precio" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="cantidad" class="form-label">Tipo</label>
+            <select class="form-select" id="producto" name="producto" required>
+                <option value="select-producto">--Seleccione un producto--</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}">{{ categoria.categoria_unidad }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+
 </body>
 </html>

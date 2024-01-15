@@ -35,26 +35,40 @@
     </header>
     
     <div class="formulario" id="agregarExistente">
-        <form action="/bodega/productos" method="POST"></form>
-        <div class="mb-3">
-            <label for="producto1" class="form-label">Producto</label>
-            <select class="form-select" id="producto" name="producto[]" required>
-                <option value="select-producto">--Seleccione un producto--</option>
-                {% for producto in productos %}
-                    <option value="{{ producto.id }}">{{ producto.nombre_producto }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="precio" class="form-label">Precio</label>
-            <input type="number" class="form-control" id="precio" name="precio" required min="0">
-        </div>
-        <div class="mb-3">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad" name="cantidad" required min="0">
-        </div>
+        <form action="{% url 'modificar_producto' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="producto" class="form-label">Producto</label>
+                <select class="form-select" id="producto" name="producto" required>
+                    <option value="select-producto">--Seleccione un producto--</option>
+                    {% for producto in productos %}
+                        <option value="{{ producto.id }}">{{ producto.nombre_producto }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Guardar</button>
+            <div class="mb-3">
+                <label for="precio" class="form-label">Precio</label>
+                <input type="number" class="form-control" id="precio" name="precio" required min="0">
+            </div>
+
+            <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" required min="0">
+            </div>
+
+            <div class="mb-3">
+                <label for="proveedor" class="form-label">Proveedor</label>
+                <select class="form-select" id="producto" name="producto" required>
+                    <option value="select-producto">--Seleccione un proveedor--</option>
+                    {% for proveedor in unidades %}
+                        <option value="{{ proveedor.id }}">{{ proveedor.nombre_Unidad }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
     </div>
     
 </body>

@@ -1,6 +1,6 @@
 from gettext import translation
 from django.shortcuts import redirect, render
-from .models import Producto, Categoria, Historial, DetallesHistorial, Unidad
+from .models import Producto, Categoria, Historial, DetallesHistorial, Unidad, CategoriaUnidad
 from datetime import datetime
 # Create your views here.
 def view_login(request):
@@ -22,7 +22,7 @@ def view_productos(request):
         productos = Producto.objects.all()
 
     for producto in productos:
-        producto.precio_total = producto.stock * producto.precio
+        producto.precio_total = producto.cantidad * producto.precio
         
     return render(request, 'bodega.html', {'categorias': categorias, 'productos': productos, 'categoria_filter': categoria_filter})
 
@@ -43,7 +43,8 @@ def view_productos_output(request):
 
 def view_units(request):
     unidades = Unidad.objects.all()
-    return render(request, 'unidades.html', {'unidades': unidades})
+    categorias = CategoriaUnidad.objects.all()
+    return render(request, 'unidades.html', {'unidades': unidades, 'categorias': categorias})
 
 def create_producto(request):
     if request.method == 'POST':
@@ -53,7 +54,6 @@ def create_producto(request):
         cantidades = request.POST.getlist('cantidad[]')
         categorias_ids = request.POST.getlist('categoria[]')
 
-        # Create a new Historial object only once
         historial = Historial.objects.create(fecha=datetime.now())
 
         for nombre, descripcion, precio, cantidad, categoria_id in zip(nombres, descripciones, precios, cantidades, categorias_ids):
@@ -62,15 +62,14 @@ def create_producto(request):
                 nombre_producto=nombre,
                 descripcion=descripcion,
                 precio=float(precio),
-                stock=int(cantidad),
+                cantidad=int(cantidad),
                 categoria=categoria
             )
 
-            # Associate the product with the previously created Historial
             DetallesHistorial.objects.create(
                 historial=historial,
                 producto=producto,
-                cantidad=producto.stock,
+                cantidad=producto.cantidad,
                 precio_unitario=producto.precio
             )
 
@@ -80,27 +79,46 @@ def create_producto(request):
     return render(request, 'bodega.html')
 
 def update_producto(request):
+    productos = Producto.objects.all()
+
     if request.method == 'POST':
-        producto_id = request.POST.get('id')
-        cantidad_nueva = int(request.POST.get('cantidad_nueva'))
-        nuevo_precio = float(request.POST.get('nuevo_precio'))
+        producto_id = request.POST.get('producto')
+        nuevo_precio = float(request.POST.get('precio'))
+        cantidad = int(request.POST.get('cantidad'))
 
         producto_existente = Producto.objects.get(id=producto_id)
 
-        producto_existente.stock += cantidad_nueva
-        producto_existente.precio = nuevo_precio
-        producto_existente.save()
-
-        historial = Historial.objects.get(fecha=datetime.now())
-
         DetallesHistorial.objects.create(
-            historial=historial,
+            historial=Historial.objects.create(fecha=datetime.now()),
             producto=producto_existente,
-            cantidad=cantidad_nueva,
+            cantidad=cantidad,
             precio_unitario=nuevo_precio
         )
 
-        return redirect('/bodega/productos')
+        producto_existente.precio = nuevo_precio
+        producto_existente.cantidad += cantidad
+        producto_existente.save()
 
+        return redirect('/bodega/productos')
+    return render(request, 'bodega.html', {'productos': productos})
+    
 def producto_output(request):
-    return redirect('/bodega/productos')
+    if request.method == 'POST':
+        producto_id = request.POST.get('producto')
+        cantidad = int(request.POST.get('cantidad'))
+        receptor = request.POST.get('receptor')
+
+        producto_output = Producto.objects.get(id=producto_id)
+
+        DetallesHistorial.objects.create(
+            historial=Historial.objects.create(fecha=datetime.now()),
+            producto=producto_output,
+            cantidad=cantidad,
+            precio_unitario=producto_output.precio,
+            receptor=receptor
+        )
+
+        producto_output.cantidad -= cantidad
+        producto_output.save()
+
+        return redirect('/bodega/productos')
