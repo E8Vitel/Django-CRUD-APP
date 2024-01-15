@@ -101,3 +101,6 @@ def update_producto(request):
         )
 
         return redirect('/bodega/productos')
+
+def producto_output(request):
+    return redirect('/bodega/productos')

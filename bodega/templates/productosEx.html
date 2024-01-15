@@ -35,6 +35,7 @@
     </header>
     
     <div class="formulario" id="agregarExistente">
+        <form action="/bodega/productos" method="POST"></form>
         <div class="mb-3">
             <label for="producto1" class="form-label">Producto</label>
             <select class="form-select" id="producto" name="producto[]" required>
@@ -45,12 +46,12 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="precio1" class="form-label">Precio</label>
-            <input type="number" class="form-control" id="precio1" name="precio[]" required min="0">
+            <label for="precio" class="form-label">Precio</label>
+            <input type="number" class="form-control" id="precio" name="precio" required min="0">
         </div>
         <div class="mb-3">
-            <label for="cantidad1" class="form-label">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad1" name="cantidad[]" required min="0">
+            <label for="cantidad" class="form-label">Cantidad</label>
+            <input type="number" class="form-control" id="cantidad" name="cantidad" required min="0">
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar</button>
