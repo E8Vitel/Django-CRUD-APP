@@ -13,9 +13,11 @@ $(document).ready(function () {
         nuevoProducto.find("input[id^='cantidad']").attr("id", "cantidad" + contadorProductos);
         nuevoProducto.find("label[for^='categoria']").attr("for", "categoria" + contadorProductos);
         nuevoProducto.find("select[id^='categoria']").attr("id", "categoria" + contadorProductos);
+        nuevoProducto.find("label[for^='proveedor']").attr("for", "proveedor" + contadorProductos);
+        nuevoProducto.find("select[id^='proveedor']").attr("id", "proveedor" + contadorProductos);
 
         nuevoProducto.append('<span class="eliminarProducto" onclick="eliminarProducto(this)">-</span>');
-
+        
         nuevoProducto.find(".eliminarProducto").css({
             "display": "flex",
             "justify-content": "center",
@@ -37,4 +39,5 @@ $(document).ready(function () {
     eliminarProducto = function (elemento) {
     $(elemento).closest('.producto').remove();
     };
+    
 });

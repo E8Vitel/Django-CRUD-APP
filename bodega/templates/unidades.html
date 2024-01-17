@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="{% static 'js/forms.js' %}"></script>
-    <title>Agregar productos</title>
+    <script src="{% static 'js/unidad.js' %}"></script>
+    <title>Agregar unidades</title>
 </head>
 <body>
 
@@ -34,23 +34,61 @@
         </div>
     </header>
 
-    <form action="{% url 'salida_producto' %}" method="POST">
-        <div class="mb-3">
-            <label for="unidad" class="form-label">Unidad</label>
-            <input type="text" class="form-control" id="precio" name="precio" required>
-        </div>
+    <div class="container mt-5">
+        <h2>Unidades</h2>
 
-        <div class="mb-3">
-            <label for="cantidad" class="form-label">Tipo</label>
-            <select class="form-select" id="producto" name="producto" required>
-                <option value="select-producto">--Seleccione un producto--</option>
-                {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}">{{ categoria.categoria_unidad }}</option>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Unidad</th>
+                    <th scope="col">Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for unidad in unidades %}
+                <tr>
+                    <td>{{ unidad.nombre_Unidad }}</td>
+                    <td>{{ unidad.categoria_unidad.categoria_unidad }}</td>
+                </tr>
                 {% endfor %}
-            </select>
+            </tbody>
+        </table>
+    </div>
+
+    <button class="btn btn-primary floating-button" data-bs-toggle="modal" data-bs-target="#crearUnidadModal">Crear Unidad</button>
+
+    <div class="modal fade" id="crearUnidadModal" tabindex="-1" aria-labelledby="crearUnidadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="crearUnidadModalLabel">Crear Unidad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'unidad' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="nombre_unidad" class="form-label">Nombre de la Unidad:</label>
+                            <input type="text" class="form-control" id="nombre_unidad" name="nombre_unidad" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoria_unidad" class="form-label">Tipo de Unidad:</label>
+                            <select class="form-select" id="categoria_unidad" name="categoria_unidad" required>
+                                <option value="" disabled selected>-- Seleccione una categoría --</option>
+                                {% for categoria in categorias %}
+                                    <option value="{{ categoria.id }}">{{ categoria.categoria_unidad }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3 text-center">
+                            <button type="submit" class="btn btn-primary">Crear Unidad</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Guardar</button>
-    </form>
+    </div>
+    
 
 </body>
 </html>

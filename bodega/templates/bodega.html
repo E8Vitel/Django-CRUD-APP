@@ -37,7 +37,16 @@
         {% for categoria in categorias %}
             <a href="?categoria={{ categoria.id }}" {% if categoria.id == categoria_filter %}class="active"{% endif %}>{{ categoria.nombre_categoria }}</a>
         {% endfor %}
+
     </nav>
+
+    <form method="get" action="{% url 'view_productos' %}">
+        <div class="mb-3">
+            <label for="search" class="form-label">Buscar producto:</label>
+            <input type="text" class="form-control" id="search" name="q" value="{{ request.GET.q }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
 
     <div class="container mt-5">
         <h2>Productos</h2>
@@ -56,7 +65,7 @@
             </thead>
             <tbody>
                 {% for producto in productos %}
-                <tr id="fila{{ forloop.counter }}" {% if producto.id == producto_modificado_id %}class="producto-modificado"{% endif %}>
+                <tr id="fila{{ forloop.counter }}" >
                     <td>{{ producto.nombre_producto }}</td>
                     <td>{{ producto.descripcion }}</td>
                     <td>
@@ -68,8 +77,8 @@
                             {{ producto.cantidad }}
                         {% endif %}
                     </td>
-                    <td>{{ producto.precio|floatformat:0 }}</td>
-                    <td>{{ producto.precio_total|floatformat:0 }}</td>
+                    <td>${{ producto.precio|floatformat:0 }}</td>
+                    <td>${{ producto.precio_total|floatformat:0 }}</td>
                     <td>{{ producto.categoria.nombre_categoria }}</td> 
                     <td>
                         <button class="btn-editar" data-fila="{{ forloop.counter }}">Editar</button>

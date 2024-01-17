@@ -40,10 +40,13 @@
                 <span>{{ historial.fecha }}</span>
                 <ul>
                     {% for detalle in historial.detalleshistorial_set.all %}
-                        <li>{{ detalle.producto.nombre_producto }} - Cantidad: {{ detalle.cantidad }} - Precio Unitario: {{ detalle.precio_unitario|floatformat:0 }}</li>
+                        <li>{{ detalle.producto.nombre_producto }} 
+                            - Cantidad: {{ detalle.cantidad }} 
+                            - Precio Unitario: {{ detalle.precio_unitario|floatformat:0 }} 
+                            - Proveedor: {{ detalle.producto.proveedor.nombre_Unidad }}</li>
                     {% endfor %}
                 </ul>
-                <button class="eliminar">Eliminar</button>
+                <button type="button" class="btn btn-danger">Eliminar</button>
             </li>
             {% endfor %}
         </ul>
