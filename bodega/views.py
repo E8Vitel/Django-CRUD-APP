@@ -89,50 +89,63 @@ def update_producto(request):
     productos = Producto.objects.all()
 
     if request.method == 'POST':
-        productos_data = request.POST.getlist('producto')
-        precios = request.POST.getlist('precio')
-        cantidades = request.POST.getlist('cantidad')
+        productos_data = request.POST.getlist('productos[]')
+        precios = request.POST.getlist('precios[]')
+        cantidades = request.POST.getlist('cantidades[]')
 
         historial = Historial.objects.create(fecha=datetime.now())
 
         for producto_id, nuevo_precio, cantidad in zip(productos_data, precios, cantidades):
             producto_existente = Producto.objects.get(id=producto_id)
 
-            DetallesHistorial.objects.create(
+            detalle_historial = DetallesHistorial(
                 historial=historial,
                 producto=producto_existente,
                 cantidad=int(cantidad),
                 precio_unitario=float(nuevo_precio),
             )
+            detalle_historial.save()
 
-        producto_existente.precio = nuevo_precio
-        producto_existente.cantidad += cantidad
-        producto_existente.save()
+            producto_existente.precio = float(nuevo_precio)
+            producto_existente.cantidad += int(cantidad)
+            producto_existente.save()
 
         return redirect('/bodega/productos')
+
     return render(request, 'bodega.html', {'productos': productos})
     
 def producto_output(request):
     productos = Producto.objects.all()
+    
     if request.method == 'POST':
-        producto_id = request.POST.get('producto')
-        cantidad = int(request.POST.get('cantidad'))
-        receptor = request.POST.get('receptor')
+        productos_ids = request.POST.getlist('productos[]')  # Corregir el nombre del campo
+        receptores_ids = request.POST.getlist('receptores[]')         
+        cantidades = request.POST.getlist('cantidades[]')
 
-        producto_output = Producto.objects.get(id=producto_id)
+        # Crear un único historial fuera del bucle
+        historial = Historial.objects.create(fecha=datetime.now())
 
-        DetallesHistorial.objects.create(
-            historial=Historial.objects.create(fecha=datetime.now()),
-            producto=producto_output,
-            cantidad=cantidad,
-            precio_unitario=producto_output.precio,
-            receptor=receptor
-        )
+        for producto_id, receptor_id, cantidad in zip(productos_ids, receptores_ids, cantidades):
+            cantidad = int(cantidad)
+            producto_output = Producto.objects.get(id=producto_id)
+            receptor = Unidad.objects.get(id=receptor_id)
 
-        producto_output.cantidad -= cantidad
-        producto_output.save()
+            DetallesHistorial.objects.create(
+                historial=historial,
+                producto=producto_output,
+                cantidad=cantidad,
+                precio_unitario=producto_output.precio,
+            )
 
+            if cantidad <= producto_output.cantidad:
+                producto_output.cantidad -= cantidad
+                producto_output.save()
+
+        historial.receptor = receptor
+        historial.save()
+        
         return redirect('/bodega/productos')
+
     return render(request, 'bodega.html', {'productos': productos})
 
 def create_unit(request):

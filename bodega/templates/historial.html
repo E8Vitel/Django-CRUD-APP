@@ -41,9 +41,15 @@
                 <ul>
                     {% for detalle in historial.detalleshistorial_set.all %}
                         <li>{{ detalle.producto.nombre_producto }} 
-                            - Cantidad: {{ detalle.cantidad }} 
+                            
                             - Precio Unitario: {{ detalle.precio_unitario|floatformat:0 }} 
-                            - Proveedor: {{ detalle.producto.proveedor.nombre_Unidad }}</li>
+                        {% if detalle.historial.receptor %}
+                            - Cantidad enviada: {{ detalle.cantidad }} 
+                            - Receptor: {{ detalle.historial.receptor.nombre_Unidad }}
+                        {% else %}
+                            - Cantidad: {{ detalle.cantidad }} 
+                            - Proveedor: {{ detalle.producto.proveedor.nombre_Unidad }}
+                        {% endif %}</li>
                     {% endfor %}
                 </ul>
                 <button type="button" class="btn btn-danger">Eliminar</button>
