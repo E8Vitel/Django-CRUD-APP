@@ -10,7 +10,7 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    font-family: "Poppins";
+    font-family: 'Roboto', sans-serif;
   }
   
   .container {
@@ -29,7 +29,7 @@
   h1 {
     color: #607d8b;
     font-size: 38px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Roboto', sans-serif;
   }
   
   form {

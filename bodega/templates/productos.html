@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,7 @@
             <a href="../historial">Historial</a>
         </div>
         <div class="navIndex">
-            <a href="../login">Cerrar sesión</a>
+            <a href="{% url 'logout' %}">Cerrar sesión</a>
         </div>
     </header>
     
@@ -84,5 +84,9 @@
         </form>
     </div>
 
+    <hr>
+    <footer>
+        <p>Derechos de autor © 2024 CEM Ovalle</p>
+    </footer>
 </body>
 </html>

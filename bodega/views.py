@@ -1,16 +1,37 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from .forms import CustomAuthenticationForm
 from .models import Producto, Categoria, Historial, DetallesHistorial, Unidad, CategoriaUnidad
 from datetime import datetime
 
 # Create your views here.
 def view_login(request):
-    return render(request, 'index.html')
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('view_productos')
+    else:
+        form = CustomAuthenticationForm()
 
+    return render(request, 'login.html', {'form': form})
+
+def view_logout(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
 def view_historial(request):
     historiales = Historial.objects.all()
     context = {'historiales': historiales}
     return render(request, 'historial.html', context)
 
+@login_required
 def view_productos(request):
     categorias = Categoria.objects.all()
     categoria_filter = request.GET.get('categoria', 'todo')
@@ -27,29 +48,34 @@ def view_productos(request):
         
     return render(request, 'bodega.html', {'categorias': categorias, 'productos': productos, 'categoria_filter': categoria_filter})
 
+@login_required
 def view_create_productos(request):
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
     unidades = Unidad.objects.filter(categoria_unidad_id=1)
     return render(request, 'productos.html', {'productos': productos, 'categorias': categorias, 'unidades': unidades})
 
+@login_required
 def view_create_existing_productos(request):
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
     unidades = Unidad.objects.filter(categoria_unidad_id=1)
     return render(request, 'productosEx.html', {'productos': productos, 'categorias': categorias, 'unidades': unidades})
 
+@login_required
 def view_productos_output(request):
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
     unidades = Unidad.objects.filter(categoria_unidad_id=2)
     return render(request, 'salidaProd.html', {'productos': productos, 'categorias': categorias, 'unidades': unidades})
 
+@login_required
 def view_units(request):
     unidades = Unidad.objects.all()
     categorias = CategoriaUnidad.objects.all()
     return render(request, 'unidades.html', {'unidades': unidades, 'categorias': categorias})
 
+@login_required
 def create_producto(request):
     if request.method == 'POST':
         nombres = request.POST.getlist('nombreProducto[]')
@@ -84,6 +110,7 @@ def create_producto(request):
 
     return render(request, 'bodega.html')
 
+@login_required
 def create_existing_productos(request):
     productos = Producto.objects.all()
 
@@ -112,7 +139,8 @@ def create_existing_productos(request):
         return redirect('/bodega/productos')
 
     return render(request, 'bodega.html', {'productos': productos})
-    
+
+@login_required   
 def producto_output(request):
     productos = Producto.objects.all()
     
@@ -146,6 +174,7 @@ def producto_output(request):
 
     return render(request, 'bodega.html', {'productos': productos})
 
+@login_required
 def create_unit(request):
     if request.method == 'POST':
         nombre_unidad = request.POST.get('nombre_unidad')
