@@ -38,7 +38,7 @@
     <div>
         <h1 class="titulo-agregar">Agregar productos existentes</h1>
         <hr class="separador">
-        <form action="{% url 'modificar_producto' %}" method="POST">
+        <form action="{% url 'existing_producto' %}" method="POST">
             {% csrf_token %}
             <div class="productos-container">
                 <div class="producto">

@@ -1,7 +1,7 @@
-from gettext import translation
 from django.shortcuts import redirect, render
 from .models import Producto, Categoria, Historial, DetallesHistorial, Unidad, CategoriaUnidad
 from datetime import datetime
+
 # Create your views here.
 def view_login(request):
     return render(request, 'index.html')
@@ -85,7 +85,7 @@ def create_producto(request):
 
     return render(request, 'bodega.html')
 
-def update_producto(request):
+def create_existing_productos(request):
     productos = Producto.objects.all()
 
     if request.method == 'POST':
@@ -118,11 +118,10 @@ def producto_output(request):
     productos = Producto.objects.all()
     
     if request.method == 'POST':
-        productos_ids = request.POST.getlist('productos[]')  # Corregir el nombre del campo
+        productos_ids = request.POST.getlist('productos[]')
         receptores_ids = request.POST.getlist('receptores[]')         
         cantidades = request.POST.getlist('cantidades[]')
 
-        # Crear un único historial fuera del bucle
         historial = Historial.objects.create(fecha=datetime.now())
 
         for producto_id, receptor_id, cantidad in zip(productos_ids, receptores_ids, cantidades):
@@ -143,7 +142,7 @@ def producto_output(request):
 
         historial.receptor = receptor
         historial.save()
-        
+
         return redirect('/bodega/productos')
 
     return render(request, 'bodega.html', {'productos': productos})
@@ -153,16 +152,13 @@ def create_unit(request):
         nombre_unidad = request.POST.get('nombre_unidad')
         categoria_unidad_id = request.POST.get('categoria_unidad')
 
-        # Obtener la categoría de la unidad
         categoria_unidad = CategoriaUnidad.objects.get(id=categoria_unidad_id)
 
-        # Crear la unidad con la categoría
         Unidad.objects.create(
             nombre_Unidad=nombre_unidad,
             categoria_unidad=categoria_unidad
         )
 
-        # Redirigir a la página de unidades o a donde desees
         return redirect('../unidades')
 
     return render(request, 'unidades.html')
