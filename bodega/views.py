@@ -80,7 +80,6 @@ def create_producto(request):
                 precio_unitario=producto.precio
             )
 
-        # Redirect to the page after all products are processed
         return redirect('/bodega/productos')
 
     return render(request, 'bodega.html')
