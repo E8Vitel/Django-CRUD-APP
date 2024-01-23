@@ -5,12 +5,11 @@ $(document).ready(function () {
         contadorProductos++;
         var nuevoProducto = $(".producto:first").clone();
         nuevoProducto.find("input, select").val("");
-        nuevoProducto.find(".productos").attr("name", "productos[]");
-        nuevoProducto.find(".receptores").attr("name", "receptores[]");
-        nuevoProducto.find(".cantidades").attr("name", "cantidades[]");
+        nuevoProducto.find(".productos").attr("name", "productos_" + contadorProductos);
+        nuevoProducto.find(".cantidades").attr("name", "cantidades_" + contadorProductos);
 
         nuevoProducto.append('<span class="eliminarProducto" onclick="eliminarProducto(this)">-</span>');
-        
+
         nuevoProducto.find(".eliminarProducto").css({
             "display": "flex",
             "justify-content": "center",

@@ -1,5 +1,4 @@
 {% load static %}
-{% load crispy_forms_tags %}
 
 <!DOCTYPE html>
 <html lang="es">
@@ -8,13 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/estilobodega.css' %}">
     <link rel="stylesheet" href="{% static 'css/estiloproducto.css' %}">
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="{% static 'js/forms.js' %}"></script>
-    <title>Solicitud de productos</title>
+    <title>Agregar productos</title>
 </head>
 <body>
 
@@ -32,27 +30,23 @@
             </div>
         </nav>
     </header>
-
-    <div>
-        <h1 class="titulo-agregar">Solicitar productos</h1>
-        <hr class="separador">
-        <form action="{% url 'salida_producto' %}" method="POST" id="solicitudForm">
-            {% csrf_token %}
-            <div class="productos-container">
-                <div class="producto">
-                    <select name="productos" class="form-select">
-                        {% for producto in productos %}
-                            <option value="{{ producto.id }}">{{ producto.nombre_producto }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="text" name="cantidades" class="form-control" placeholder="Cantidad">
-                </div>
-            </div>
+    
+    {% for solicitud in solicitudes_pendientes %}
+    <p>{{ solicitud.usuario.username }} solicita:
+        {% for detalle in solicitud.detalles_solicitud.all %}
+            {{ detalle.cantidad }} unidades de {{ detalle.producto.nombre_producto }}.
+        {% endfor %}
+    </p>
+    <form method="POST" action="{% url 'gestionar_solicitud' solicitud.id %}">
+        {% csrf_token %}
+        <button type="submit" name="aceptar">Aceptar</button>
         
-            <button type="button" class="btn btn-primary" id="agregarOtroProducto">Agregar Otro Producto</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-        </form>
-    </div>
+    </form>
+    <form method="POST" action="{% url 'eliminar_solicitud' solicitud.id %}">
+        {% csrf_token %}
+        <button type="submit" name="declinar">Declinar</button>
+    </form>
+{% endfor %}
 
     <hr>
     <footer>

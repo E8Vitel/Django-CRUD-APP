@@ -17,21 +17,18 @@
 <body>
 
     <header class="logo2">
-        <div>
-            <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
-        </div>
-        <div class="navIndex">
-            <a href="/bodega/productos">Inicio</a>
-        </div>
-        <div class="navIndex">
-            <a href="unidades">Unidades</a>
-        </div>
-        <div class="navIndex">
-            <a href="historial">Historial</a>
-        </div>
-        <div class="navIndex">
-            <a href="{% url 'logout' %}">Cerrar sesión</a>
-        </div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
+                <a class="navbar-brand" href="{% url 'view_productos' %}">Inicio</a>
+                <a class="navbar-brand" href="{% url 'view_unidades' %}">Unidades</a>
+                {% if user.is_staff %}
+                <a class="navbar-brand" href="{% url 'view_solicitudes' %}">Solicitudes</a>
+                {% endif %}
+                <a class="navbar-brand" href="{% url 'view_historial' %}">Historial</a>
+                <a class="navbar-brand" href="{% url 'logout' %}">Cerrar sesión</a>
+            </div>
+        </nav>
     </header>
 
     <div class="container mt-5">
@@ -89,6 +86,9 @@
         </div>
     </div>
     
-
+    <hr>
+    <footer>
+        <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
+    </footer>
 </body>
 </html>

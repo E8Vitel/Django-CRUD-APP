@@ -6,11 +6,11 @@
   
 
   body {
+    font-family: 'Roboto', sans-serif;
     background-image: url('');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    font-family: 'Roboto', sans-serif;
   }
   
   .container {
@@ -29,7 +29,6 @@
   h1 {
     color: #607d8b;
     font-size: 38px;
-    font-family: 'Roboto', sans-serif;
   }
   
   form {

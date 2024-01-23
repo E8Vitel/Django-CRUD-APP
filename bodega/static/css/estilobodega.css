@@ -59,6 +59,6 @@ td.descripcion {
 }
 
 .bajo-stock {
-    background-color: #ff9999;
+    margin-right: 10px;
     font-weight: bold; 
 }
