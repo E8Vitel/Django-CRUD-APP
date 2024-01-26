@@ -72,3 +72,9 @@
 .w-50 {
     width: 50%;
 }
+
+.custom-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+

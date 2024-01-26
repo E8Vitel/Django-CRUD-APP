@@ -14,13 +14,8 @@ td {
     padding: 8px;
     border: 1px solid #ddd;
 }
-
-td.stock, td.precio {
-    width: 50px;
-}
-
-td.descripcion {
-    width: 500px;
+.table tbody tr {
+    margin-bottom: 10px; /* Ajusta según tus preferencias */
 }
 
 .floating-button {
@@ -56,9 +51,4 @@ td.descripcion {
     width: 100%;
     margin-bottom: 5px;
     text-align: left;
-}
-
-.bajo-stock {
-    margin-right: 10px;
-    font-weight: bold; 
 }

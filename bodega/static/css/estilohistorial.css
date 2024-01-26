@@ -35,11 +35,3 @@ li {
     align-items: center;
 }
 
-.delete-button {
-    background-color: #FF6347;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-

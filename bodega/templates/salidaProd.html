@@ -17,21 +17,40 @@
     <title>Solicitud de productos</title>
 </head>
 <body>
-
-    <header class="logo2">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
-                <a class="navbar-brand" href="{% url 'view_productos' %}">Inicio</a>
-                <a class="navbar-brand" href="{% url 'view_unidades' %}">Unidades</a>
-                {% if user.is_staff %}
-                <a class="navbar-brand" href="{% url 'view_solicitudes' %}">Solicitudes</a>
-                {% endif %}
-                <a class="navbar-brand" href="{% url 'view_historial' %}">Historial</a>
-                <a class="navbar-brand" href="{% url 'logout' %}">Cerrar sesión</a>
+    <style>
+        body {
+            background: linear-gradient(135deg, #5e76ff 30%, #0044ff 70%);
+        }
+    </style>
+    <nav class="navbar navbar-expand-lg navbar-white bg-light">
+        <div class="container">
+            <img src="{% static 'img/LogoCorto.png' %}" href="{% url 'view_productos' %} alt="Logo" class="logo">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_productos' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_unidades' %}">Unidades</a>
+                    </li>
+                    {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_solicitudes' %}">Solicitudes</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_historial' %}">Historial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <div>
         <h1 class="titulo-agregar">Solicitar productos</h1>
@@ -54,8 +73,8 @@
         </form>
     </div>
 
-    <hr>
-    <footer>
+
+    <footer class="p-3 bg-body-tertiary mt-5 bg-light">
         <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
     </footer>
 </body>

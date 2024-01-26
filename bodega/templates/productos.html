@@ -13,47 +13,84 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="{% static 'js/forms.js' %}"></script>
     <title>Agregar productos</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #5e76ff 30%, #0044ff 70%);
+        }
+
+        .productos-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .producto {
+            width: 100%;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .producto label {
+            margin-bottom: 5px;
+        }
+
+        .btn-agregar {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-
-    <header class="logo2">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
-                <a class="navbar-brand" href="{% url 'view_productos' %}">Inicio</a>
-                <a class="navbar-brand" href="{% url 'view_unidades' %}">Unidades</a>
-                {% if user.is_staff %}
-                <a class="navbar-brand" href="{% url 'view_solicitudes' %}">Solicitudes</a>
-                {% endif %}
-                <a class="navbar-brand" href="{% url 'view_historial' %}">Historial</a>
-                <a class="navbar-brand" href="{% url 'logout' %}">Cerrar sesión</a>
+    <nav class="navbar navbar-expand-lg navbar-white bg-light">
+        <div class="container">
+            <img src="{% static 'img/LogoCorto.png' %}" href="{% url 'view_productos' %}" alt="Logo" class="logo">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_productos' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_unidades' %}">Unidades</a>
+                    </li>
+                    {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_solicitudes' %}">Solicitudes</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_historial' %}">Historial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
     
-    <div>
+    <div class="container mt-4 shadow-sm p-3 bg-body-tertiary rounded">
         <h1 class="titulo-agregar">Agregar productos</h1>
         <hr class="separador">
         <form action="/bodega/productos/" method="POST">
             {% csrf_token %}
             <div class="productos-container">
-                <div class="producto">
+                <div class="producto  p-3 bg-body-tertiary">
                     <div class="mb-3">
                         <label for="nombreProducto1" class="form-label">Nombre del Producto</label>
                         <input type="text" class="form-control" id="nombreProducto1" name="nombreProducto[]" required>
                     
-                        <br>
-                        <label for="descripcion1" class="form-label">Descripción</label>
-                        <textarea class="form-control col-8 form-control-lg" id="descripcion1" name="description[]" rows="4"></textarea>
+                        <label for="descripcion1" class="form-label mt-3">Descripción</label>
+                        <textarea class="form-control" id="descripcion1" name="description[]" rows="4"></textarea>
                     </div>
 
                     <div class="mb-3" >
                         <label for="precio1" class="form-label">Precio</label>
                         <input type="number" class="form-control w-50" id="precio1" name="precio[]" required min="0">
 
-                        <br>
-                        <label for="categoria1" class="form-label">Categoría</label>
-                        <select class="form-select form-control-lg" id="categoria1" name="categoria[]" required>
+                        <label for="categoria1" class="form-label mt-3">Categoría</label>
+                        <select class="form-select" id="categoria1" name="categoria[]" required>
                             <option value="select-categoria">--Seleccione una categoria--</option>
                             {% for categoria in categorias %}
                             <option value="{{ categoria.id }}">{{ categoria.nombre_categoria }}</option>
@@ -64,25 +101,23 @@
                         <label for="cantidad1" class="form-label">Cantidad</label>
                         <input type="number" class="form-control w-50" id="cantidad1" name="cantidad[]" required min="0">
 
-                        <br>
-                        <label for="proveedor1" class="form-label">Proveedor</label>
-                        <select class="form-select form-control-lg" id="proveedor1" name="proveedor[]" required>
-                            <option value="select-proveedor">--Seleccione un proveedor--</option>
-                            {% for unidad in unidades %}
-                            <option value="{{ unidad.id }}">{{ unidad.nombre_Unidad }}</option>
-                            {% endfor %}
-                        </select>
+                        <label for="proveedor1" class="form-label mt-3">Proveedores</label>
+                        {% for unidad in unidades %}
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="proveedor{{ unidad.id }}" name="proveedores[]" value="{{ unidad.id }}">
+                                <label class="form-check-label" for="proveedor{{ unidad.id }}">{{ unidad.nombre_Unidad }}</label>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
             
-            <button type="button" class="btn btn-primary" id="agregarOtroProducto">Agregar Otro Producto</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-primary btn-agregar" id="agregarOtroProducto">Agregar Otro Producto</button>
+            <button type="submit" class="btn btn-primary btn-agregar">Guardar</button>
         </form>
     </div>
 
-    <hr>
-    <footer>
+    <footer class="p-3 bg-body-tertiary mt-5 bg-light">
         <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
     </footer>
 </body>

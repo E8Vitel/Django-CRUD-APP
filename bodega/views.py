@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bodega.decorators import admin_required
 from .forms import CustomAuthenticationForm, ProductoForm, SolicitudForm
-from .models import DetalleSolicitud, Producto, Categoria, Historial, DetallesHistorial, Solicitud, Unidad, CategoriaUnidad
+from .models import DetalleSolicitud, Producto, Categoria, Historial, DetallesHistorial, Solicitud, Unidad, CategoriaUnidad, UserProfile, producto_proveedor
 from datetime import datetime
 
 # Create your views here.
@@ -77,8 +77,9 @@ def view_productos_output(request):
 @login_required
 def view_units(request):
     unidades = Unidad.objects.all()
+    perfiles = UserProfile.objects.all()
     categorias = CategoriaUnidad.objects.all()
-    return render(request, 'unidades.html', {'unidades': unidades, 'categorias': categorias})
+    return render(request, 'unidades.html', {'unidades': unidades, 'categorias': categorias, 'perfiles': perfiles})
 
 @login_required
 def view_solicitudes(request):
@@ -96,21 +97,21 @@ def create_producto(request):
         precios = request.POST.getlist('precio[]')
         cantidades = request.POST.getlist('cantidad[]')
         categorias_ids = request.POST.getlist('categoria[]')
-        proveedores_ids = request.POST.getlist('proveedor[]')
+        proveedores_ids = request.POST.getlist('proveedores[]')
 
         historial = Historial.objects.create(fecha=datetime.now())
 
-        for nombre, descripcion, precio, cantidad, categoria_id, proveedor_id in zip(nombres, descripciones, precios, cantidades, categorias_ids, proveedores_ids):
+        for nombre, descripcion, precio, cantidad, categoria_id in zip(nombres, descripciones, precios, cantidades, categorias_ids):
             categoria = Categoria.objects.get(id=categoria_id)
-            proveedor = Unidad.objects.get(id=proveedor_id)
             producto = Producto.objects.create(
                 nombre_producto=nombre,
                 descripcion=descripcion,
                 precio=float(precio),
                 cantidad=int(cantidad),
                 categoria=categoria,
-                proveedor=proveedor
             )
+
+            producto.proveedores.set(proveedores_ids)
 
             DetallesHistorial.objects.create(
                 historial=historial,
@@ -118,12 +119,13 @@ def create_producto(request):
                 nombre_producto=producto.nombre_producto,
                 cantidad=producto.cantidad,
                 precio_unitario=producto.precio,
-                unidad=proveedor
+                unidad=producto.proveedores.first()
             )
 
         return redirect('/bodega/productos')
 
-    return render(request, 'bodega.html')
+    proveedores = Unidad.objects.filter(id__in=proveedores_ids)
+    return render(request, 'bodega.html', {'proveedores': proveedores})
 
 @admin_required
 def create_existing_productos(request):
@@ -160,7 +162,7 @@ def create_existing_productos(request):
 def producto_output(request):
     if request.method == 'POST':
         usuario = request.user
-        solicitud = Solicitud.objects.create(usuario=usuario, estado='pendiente')
+        solicitud = Solicitud.objects.create(fecha=datetime.now(), usuario=usuario, estado='pendiente')
 
         productos_seleccionados = request.POST.getlist('productos')
         cantidades = request.POST.getlist('cantidades')
@@ -238,35 +240,45 @@ def gestionar_solicitud(request, solicitud_id):
             solicitud.estado = 'aceptada'
             solicitud.save()
 
+            user_profile, created = UserProfile.objects.get_or_create(user=solicitud.usuario)
             historial = Historial.objects.create(fecha=datetime.now(), receptor=solicitud.usuario)
-
             for detalle in solicitud.detalles_solicitud.all():
                 DetallesHistorial.objects.create(
                     historial=historial,
                     producto=detalle.producto,
                     nombre_producto=detalle.producto.nombre_producto,
                     cantidad=detalle.cantidad,
-                    precio_unitario=detalle.producto.precio
+                    precio_unitario=detalle.producto.precio,
+                    unidad=detalle.solicitud.usuario
                 )
+
+                user_profile.gasto_acumulado += detalle.cantidad * detalle.producto.precio
+                user_profile.save()
 
                 detalle.producto.cantidad -= detalle.cantidad
                 detalle.producto.save()
 
             solicitud.delete()
             return redirect('view_solicitudes')
-        elif 'denegar' in request.POST:
-            solicitud.save()
-
-            return redirect('view_solicitudes')
         
+    return redirect('view_solicitudes')
+
+def modificar_cantidad(request, solicitud_id, producto_id):
+    detalle_solicitud = get_object_or_404(DetalleSolicitud, solicitud_id=solicitud_id, producto_id=producto_id)
+
+    if request.method == 'POST':
+        nueva_cantidad = int(request.POST.get('nueva_cantidad', 0))
+        detalle_solicitud.cantidad = nueva_cantidad
+        detalle_solicitud.save()
+
     return redirect('view_solicitudes')
 
 @admin_required
 def delete_solicitud(request, solicitud_id):
-    solicitud = get_object_or_404(DetalleSolicitud, id=solicitud_id)
+    solicitudes = get_object_or_404(DetalleSolicitud, id=solicitud_id)
 
     if request.method == 'POST':
-        solicitud.delete()
+        solicitudes.delete()
         return redirect('view_solicitudes')
 
     return render(request, 'solicitudes.html', {'solicitudes': solicitudes})

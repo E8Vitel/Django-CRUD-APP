@@ -7,30 +7,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/estilohistorial.css' %}">
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <title>Historial</title>
 </head>
 <body>
+    <style>
+        body {
+            background: linear-gradient(135deg, #5e76ff 30%, #0044ff 70%);
+        }
+    </style>
 
-    <header class="logo2">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
-                <a class="navbar-brand" href="{% url 'view_productos' %}">Inicio</a>
-                <a class="navbar-brand" href="{% url 'view_unidades' %}">Unidades</a>
-                {% if user.is_staff %}
-                <a class="navbar-brand" href="{% url 'view_solicitudes' %}">Solicitudes</a>
-                {% endif %}
-                <a class="navbar-brand" href="{% url 'view_historial' %}">Historial</a>
-                <a class="navbar-brand" href="{% url 'logout' %}">Cerrar sesión</a>
+    <nav class="navbar navbar-expand-lg navbar-white bg-light">
+        <div class="container">
+            <img src="{% static 'img/LogoCorto.png' %}" href="{% url 'view_productos' %} alt="Logo" class="logo">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_productos' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_unidades' %}">Unidades</a>
+                    </li>
+                    {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_solicitudes' %}">Solicitudes</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_historial' %}">Historial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <section class="container mt-4">
+    <section class="container mt-4 shadow-sm p-3 mt-5 bg-body-tertiary rounded">
         <h2 class="text-center mb-4">Historial</h2>
         
         <div class="accordion" id="historialAccordion">
@@ -56,8 +75,12 @@
                                             - Cantidad enviada: {{ detalle.cantidad }} 
                                             - Receptor: {{ detalle.historial.receptor }}
                                         {% else %}
-                                            - Cantidad: {{ detalle.cantidad }} 
-                                            - Proveedor: {{ detalle.unidad.nombre_Unidad }}
+                                            - Cantidad: {{ detalle.cantidad }}
+                                            {% if detalle.unidad %} 
+                                            - Proveedor: {{ detalle.unidad }}
+                                            {% else %}
+                                            - Proveedor: {{ detalle.producto.proveedor }}
+                                            {% endif %}
                                         {% endif %}
                                     </li>
                                 {% endfor %}
@@ -69,9 +92,8 @@
         </div>
     </section>
     
-    <hr>
-    <footer class="text-center">
-        <p>Derechos de autor © 2024 CEM Ovalle</p>
+    <footer class="p-3 bg-body-tertiary mt-5 bg-light">
+        <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
     </footer>
 </body>
 </html>

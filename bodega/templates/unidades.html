@@ -15,41 +15,81 @@
     <title>Agregar unidades</title>
 </head>
 <body>
-
-    <header class="logo2">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
-                <a class="navbar-brand" href="{% url 'view_productos' %}">Inicio</a>
-                <a class="navbar-brand" href="{% url 'view_unidades' %}">Unidades</a>
-                {% if user.is_staff %}
-                <a class="navbar-brand" href="{% url 'view_solicitudes' %}">Solicitudes</a>
-                {% endif %}
-                <a class="navbar-brand" href="{% url 'view_historial' %}">Historial</a>
-                <a class="navbar-brand" href="{% url 'logout' %}">Cerrar sesión</a>
+    <style>
+        body {
+            background: linear-gradient(135deg, #5e76ff 30%, #0044ff 70%);
+        }
+    </style>
+    <nav class="navbar navbar-expand-lg navbar-white bg-light">
+        <div class="container">
+            <img src="{% static 'img/LogoCorto.png' %}" href="{% url 'view_productos' %} alt="Logo" class="logo">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_productos' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_unidades' %}">Unidades</a>
+                    </li>
+                    {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_solicitudes' %}">Solicitudes</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_historial' %}">Historial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <div class="container mt-5">
-        <h2>Unidades</h2>
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th scope="col">Unidad</th>
-                    <th scope="col">Tipo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for unidad in unidades %}
-                <tr>
-                    <td>{{ unidad.nombre_Unidad }}</td>
-                    <td>{{ unidad.categoria_unidad.categoria_unidad }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="container mt-5 shadow-sm p-3 mt-5 bg-body-tertiary rounded w-50">
+        <div class="mr-3">
+            <h2>Unidades</h2>
+    
+            <table class="table table-bordered table-hover shadow-sm p-3 bg-body-tertiary rounded">
+                <thead>
+                    <tr>
+                        <th scope="col">Unidad</th>
+                        <th scope="col">Gasto total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for perfil in perfiles %}
+                        <tr>
+                            <td>{{ perfil.user.username }}</td>
+                            <td>{{ perfil.gasto_acumulado }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="ml-3">
+            <h2>Proveedores</h2>
+    
+            <table class="table table-bordered table-hover shadow-sm p-3 bg-body-tertiary rounded">
+                <thead>
+                    <tr>
+                        <th scope="col">Proveedor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for unidad in unidades %}
+                        <tr>
+                            <td>{{ unidad.nombre_Unidad }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <button class="btn btn-primary floating-button" data-bs-toggle="modal" data-bs-target="#crearUnidadModal">Crear Unidad</button>
@@ -86,8 +126,7 @@
         </div>
     </div>
     
-    <hr>
-    <footer>
+    <footer class="p-3 bg-body-tertiary mt-5 bg-light">
         <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
     </footer>
 </body>

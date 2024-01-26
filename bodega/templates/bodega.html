@@ -15,23 +15,38 @@
     <title>Gestor de Bodega</title>
 </head>
 <body>
-
-    <header class="logo2">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <img class="logo" src="{% static 'img/LogoCorto.png' %}" alt="Logo">
-                <a class="navbar-brand" href="{% url 'view_productos' %}">Inicio</a>
-                <a class="navbar-brand" href="{% url 'view_unidades' %}">Unidades</a>
-                {% if user.is_staff %}
-                <a class="navbar-brand" href="{% url 'view_solicitudes' %}">Solicitudes</a>
-                {% endif %}
-                <a class="navbar-brand" href="{% url 'view_historial' %}">Historial</a>
-                <a class="navbar-brand" href="{% url 'logout' %}">Cerrar sesión</a>
+    
+    <nav class="navbar navbar-expand-lg navbar-white bg-light">
+        <div class="container">
+            <img src="{% static 'img/LogoCorto.png' %}" href="{% url 'view_productos' %} alt="Logo" class="logo">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_productos' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_unidades' %}">Unidades</a>
+                    </li>
+                    {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_solicitudes' %}">Solicitudes</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_historial' %}">Historial</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <nav class="d-flex align-items-center justify-content-between">
+    <nav class="d-flex align-items-center justify-content-between shadow-sm p-3 mb-5 bg-body-tertiary">
         <div class="dflex align-items-center">
             <a href="?categoria=todo">Todo</a>
             {% for categoria in categorias %}
@@ -49,62 +64,96 @@
     </nav>
     
     
+    <style>
+        body {
+            background: linear-gradient(135deg, #5e76ff 30%, #0044ff 70%);
+        }
+        nav.navbar a.navbar-brand, nav.d-flex a {
+            text-decoration: none;
+            font-weight: normal;
+        }
+    </style>
+
+    
     {% if messages %}
-    <ul class="messages alert alert-success">
+    <div class="toast-container position-fixed bottom-0 start-0 p-3">
         {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            <div class="toast align-items-center alert alert-success text-black {{ message.tags }}" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-black me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+
+    <script>
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl)
+        });
+        toastList.forEach(function (toast) {
+            toast.show();
+        });
+    </script>
     {% endif %}
     
 
-    <div class="container mt-5">
+    <div class="container p-3 bg-body-tertiary rounded">
         <h2>Productos</h2>
+            <table class="table table-bordered table-hover rounded">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Precio Unitario</th>
+                        <th scope="col">Precio Total</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">Proveedores</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr id="fila{{ forloop.counter }}" class="mb-2">
+                        <td>{{ producto.nombre_producto }}</td>
+                        <td>
+                            {% if producto.cantidad < 10 %}
+                            <span>{{ producto.cantidad }}</span>    
+                                <button class="alert alert-danger btn-sm d-inline-flex p-2 ">
+                                    Bajo stock!
+                                </button>
+                            </div>    
+                            {% else %}
+                                {{ producto.cantidad }}
+                            {% endif %}
+                        </td>
+                        <td>${{ producto.precio|floatformat:0 }}</td>
+                        <td>${{ producto.precio_total|floatformat:0 }}</td>
+                        <td>{{ producto.categoria.nombre_categoria }}</td> 
+                        <td>
+                            {% for proveedor in producto.proveedores.all %}
+                                -{{ proveedor.nombre_Unidad }}
+                                {% if not forloop.last %}<br> {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <a href="{% url 'edit_producto' producto.id %}" class="btn btn-primary mb-2">
+                                    Editar
+                                </a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarProductoModal{{ producto.id }}">
+                                    X
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
 
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Producto</th>
-                    <th scope="col">Descripción</th>
-                    <th scope="col">Stock</th>
-                    <th scope="col">Precio Unitario</th>
-                    <th scope="col">Precio Total</th>
-                    <th scope="col">Categoría</th>
-                    <th scope="col">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for producto in productos %}
-                <tr id="fila{{ forloop.counter }}" >
-                    <td>{{ producto.nombre_producto }}</td>
-                    <td>{{ producto.descripcion }}</td>
-                    <td>
-                        {% if producto.cantidad < 10 %}
-                        <span class="bajo-stock">{{ producto.cantidad }}</span>    
-                            <button type="button" class="alert alert-danger" data-bs-toggle="modal" data-bs-target="#productoModal" onclick="setProductoModal('{{ producto.nombre_producto }}', '{{ producto.proveedor.nombre_Unidad }}')">
-                                Bajo stock!
-                            </button>
-                        </div>    
-                        {% else %}
-                            {{ producto.cantidad }}
-                        {% endif %}
-                    </td>
-                    <td>${{ producto.precio|floatformat:0 }}</td>
-                    <td>${{ producto.precio_total|floatformat:0 }}</td>
-                    <td>{{ producto.categoria.nombre_categoria }}</td> 
-                    <td>
-                        <a href="{% url 'edit_producto' producto.id %}" class="btn btn-primary">
-                            Editar
-                        </a>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarProductoModal{{ producto.id }}">
-                            X
-                        </button>
-                    </td> 
-                </tr>
-
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
     </div>
     
     <div class="dropdown">
@@ -116,37 +165,17 @@
                 {% if user.is_staff %}
             <li><a class="dropdown-item" href="crear/nuevo">Agregar Producto</a></li>
             <li><a class="dropdown-item" href="crear/existente">Agregar Stock de Producto</a></li>
-            <li><a class="dropdown-item" href="crear/salida">Registrar Salida de Producto</a></li>
+            <li><a class="dropdown-item" href="crear/salida">Registrar Salida de Productos</a></li>
                 {% else %}
-            <li><a class="dropdown-item" href="crear/salida">Registrar Salida de Producto</a></li>
+            <li><a class="dropdown-item" href="crear/salida">Solicitar Productos</a></li>
                 {% endif %}
             {% endif %}
         </ul>
     </div>
 
-    <div class="modal fade" id="productoModal" tabindex="-1" aria-labelledby="productoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="productoModalLabel">Bajo stock!</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <span id="productoNombre"></span> tiene bajo stock!
-                </div>
-                <div class="modal-body">
-                    Proveedor: <span id="proveedorNombre"></span>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {% for producto in productos %}
     <div class="modal fade" id="eliminarProductoModal{{ producto.id }}" tabindex="-1" aria-labelledby="eliminarProductoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="eliminarProductoModalLabel">Confirmar Eliminación</h5>
@@ -171,14 +200,8 @@
     </div>
     
     {% endfor %}
-    <script>
-        function setProductoModal(productoNombre, proveedorNombre) {
-            $('#productoNombre').text(productoNombre);
-            $('#proveedorNombre').text(proveedorNombre);
-    }
-    </script>
-    <hr>
-    <footer>
+
+    <footer class="p-3 bg-body-tertiary mt-5 bg-light">
         <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
     </footer>
 </body>

@@ -3,6 +3,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    gasto_acumulado = models.FloatField(default=0.0)
+
 class Categoria(models.Model):
     nombre_categoria = models.CharField(max_length=255, unique=True)
     def __str__(self):
@@ -23,10 +27,13 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null=False, blank=False)
     cantidad = models.IntegerField(null=True, blank=True)
     precio = models.FloatField(null=True, blank=True)
-    proveedor = models.ForeignKey(Unidad, on_delete=models.CASCADE, null=True, blank=True)
+    proveedores = models.ManyToManyField(Unidad, through='producto_proveedor')
     def __str__(self):
         return self.nombre_producto
                               
+class producto_proveedor(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    proveedor = models.ForeignKey(Unidad, on_delete=models.CASCADE)
 class Historial(models.Model):
     fecha = models.DateTimeField()
     receptor = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -38,9 +45,10 @@ class DetallesHistorial(models.Model):
     nombre_producto = models.CharField(max_length=255, null=True, blank=True)  
     cantidad = models.IntegerField()
     precio_unitario = models.FloatField()
-    unidad = models.ForeignKey(Unidad, on_delete=models.SET_NULL, null=True)
+    unidad = models.CharField(max_length=255, null=True, blank=True)
 
 class Solicitud(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     productos = models.ManyToManyField(Producto, through='DetalleSolicitud')
     estado = models.CharField(max_length=20, default='pendiente')

@@ -11,9 +11,17 @@
     <title>CEM Ovalle | Inicio Sesión</title>
 </head>
 <body>
-    <div class="container">
-        <img src="{% static 'img/imagenFormulario.png' %}" alt="avatar perfil" class="imgAvatar">
-        <h1>Bienvenido</h1>
+
+    <div class="container shadow-sm p-3 mb-5 bg-body-tertiary">
+        <div class="logo-container">
+            <img src="{% static 'img/imagenFormulario.png' %}" alt="avatar perfil" class="imgAvatar">
+        </div>
+        <h1 class="text-center">Bienvenido</h1>
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            Parece que hay un problema con tus credenciales...
+        </div>
+        {% endif %}
         <form method="POST" action="{% url 'login' %}" class="form">
             {% csrf_token %}
             <div class="mb-3">
@@ -28,16 +36,10 @@
                 <button id="logearse" type="submit" class="btn btn-primary">Iniciar Sesión</button>
             </div>
         </form>
-        {% if form.errors %}
-            <div class="alert alert-danger" role="alert">
-                Parece que hay un problema con tus credenciales...
-            </div>
-        {% endif %}
     </div>
-    <hr>
-    <footer>
-        <p>Derechos de autor © 2024 CEM Ovalle</p>
+    
+    <footer class="p-3 bg-body-tertiary bg-light">
+        <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
     </footer>
 </body>
 </html>
-    

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import create_unit, create_producto, create_existing_productos, delete_producto, delete_solicitud, edit_producto, gestionar_solicitud, producto_output, view_login, view_logout, view_historial, view_productos, view_create_productos, view_create_existing_productos, view_productos_output, view_solicitudes, view_units
+from .views import create_unit, create_producto, create_existing_productos, delete_producto, delete_solicitud, edit_producto, gestionar_solicitud, modificar_cantidad, producto_output, view_login, view_logout, view_historial, view_productos, view_create_productos, view_create_existing_productos, view_productos_output, view_solicitudes, view_units
 urlpatterns = [
     path('login', view_login, name='login'),
     path('logout/', view_logout, name='logout'),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('productos/editar/<int:producto_id>', edit_producto, name='edit_producto'),
     path('productos/eliminar/<int:producto_id>', delete_producto, name='delete_producto'),
     path('gestionar_solicitud/<int:solicitud_id>/', gestionar_solicitud, name='gestionar_solicitud'),
+    path('modificar_cantidad/<int:solicitud_id>/<int:producto_id>/', modificar_cantidad, name='modificar_cantidad'),
     path('eliminar_solicitud/<int:solicitud_id>/', delete_solicitud, name='eliminar_solicitud'),
 ]
 
