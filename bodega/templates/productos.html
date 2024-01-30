@@ -7,76 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{% static 'css/estiloproducto.css' %}">
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="{% static 'js/forms.js' %}"></script>
     <title>Agregar productos</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #5e76ff 30%, #0044ff 70%);
-        }
-
-        .productos-container {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .producto {
-            width: 100%;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .producto label {
-            margin-bottom: 5px;
-        }
-
-        .btn-agregar {
-            margin-top: 20px;
-        }
-    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-white bg-light">
-        <div class="container">
-            <img src="{% static 'img/LogoCorto.png' %}" href="{% url 'view_productos' %}" alt="Logo" class="logo">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'view_productos' %}">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'view_unidades' %}">Unidades</a>
-                    </li>
-                    {% if user.is_staff %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'view_solicitudes' %}">Solicitudes</a>
-                        </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'view_historial' %}">Historial</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+
+    {% include 'navbar.html' %}
     
     <div class="container mt-4 shadow-sm p-3 bg-body-tertiary rounded">
         <h1 class="titulo-agregar">Agregar productos</h1>
         <hr class="separador">
-        <form action="/bodega/productos/" method="POST">
+        <form action="{% url 'create_producto' %}" method="POST">
             {% csrf_token %}
             <div class="productos-container">
-                <div class="producto  p-3 bg-body-tertiary">
+                <div class="producto p-3 bg-body-tertiary">
                     <div class="mb-3">
                         <label for="nombreProducto1" class="form-label">Nombre del Producto</label>
                         <input type="text" class="form-control" id="nombreProducto1" name="nombreProducto[]" required>
@@ -104,15 +53,14 @@
                         <label for="proveedor1" class="form-label mt-3">Proveedores</label>
                         {% for unidad in unidades %}
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="proveedor{{ unidad.id }}" name="proveedores[]" value="{{ unidad.id }}">
+                                <input type="checkbox" class="form-check-input" id="proveedor{{ unidad.id }}" name="proveedor[]" value="{{ unidad.id }}">
                                 <label class="form-check-label" for="proveedor{{ unidad.id }}">{{ unidad.nombre_Unidad }}</label>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
             </div>
-            
-            <button type="button" class="btn btn-primary btn-agregar" id="agregarOtroProducto">Agregar Otro Producto</button>
+        
             <button type="submit" class="btn btn-primary btn-agregar">Guardar</button>
         </form>
     </div>

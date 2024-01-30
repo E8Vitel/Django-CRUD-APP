@@ -35,14 +35,26 @@
 }
 
 .producto {
+    width: 100%;
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+    justify-content: center;
 }
 
 .productos-container {
     max-height: 480px; 
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.producto label {
+    margin-bottom: 5px;
+}
+
+.btn-agregar {
+    margin-top: 20px;
 }
 
 .eliminarProducto {
@@ -71,10 +83,5 @@
 
 .w-50 {
     width: 50%;
-}
-
-.custom-container {
-    max-width: 600px;
-    margin: 0 auto;
 }
 

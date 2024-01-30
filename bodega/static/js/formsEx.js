@@ -9,21 +9,8 @@ $(document).ready(function () {
         nuevoProducto.find(".precios").attr("name", "precios[]");
         nuevoProducto.find(".cantidades").attr("name", "cantidades[]");
 
-        nuevoProducto.append('<span class="eliminarProducto" onclick="eliminarProducto(this)">-</span>');
-        
-        nuevoProducto.find(".eliminarProducto").css({
-            "display": "flex",
-            "justify-content": "center",
-            "align-items": "center",
-            "cursor": "pointer",
-            "font-size": "18px",
-            "color": "#fff",
-            "background": "#e74c3c",
-            "border-radius": "20%",
-            "width": "30px",
-            "height": "30px",
-            "margin-left": "10px",
-        });
+        nuevoProducto.append('<button type="button" class="eliminarProducto btn btn-danger" onclick="eliminarProducto(this)"><i class="material-icons">remove</i></button>');
+        nuevoProducto.after('<hr class="separador">');
 
         nuevoProducto.appendTo(".productos-container");
     });

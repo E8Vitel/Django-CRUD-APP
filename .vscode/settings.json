@@ -3,6 +3,7 @@
         "categoria",
         "categorias",
         "descripcion",
+        "openxmlformats",
         "Ovalle"
     ],
     "python.analysis.autoImportCompletions": true,

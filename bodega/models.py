@@ -12,12 +12,8 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre_categoria
 
-class CategoriaUnidad(models.Model):
-    categoria_unidad = models.CharField(max_length=255)
-
 class Unidad(models.Model): 
     nombre_Unidad = models.CharField(max_length=255)
-    categoria_unidad = models.ForeignKey(CategoriaUnidad, on_delete=models.CASCADE, null=False, blank=False)
     def __str__(self):
         return self.nombre_Unidad
     

@@ -1,10 +1,13 @@
+from django.http import HttpResponse
+from openpyxl import Workbook
+import pandas as pd
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bodega.decorators import admin_required
 from .forms import CustomAuthenticationForm, ProductoForm, SolicitudForm
-from .models import DetalleSolicitud, Producto, Categoria, Historial, DetallesHistorial, Solicitud, Unidad, CategoriaUnidad, UserProfile, producto_proveedor
+from .models import DetalleSolicitud, Producto, Categoria, Historial, DetallesHistorial, Solicitud, Unidad, UserProfile
 from datetime import datetime
 
 # Create your views here.
@@ -31,6 +34,7 @@ def view_logout(request):
 def view_historial(request):
     historiales = Historial.objects.all()
     context = {'historiales': historiales}
+    obtener_historial_excel()
     return render(request, 'historial.html', context)
 
 @login_required
@@ -48,6 +52,7 @@ def view_productos(request):
     for producto in productos:
         producto.precio_total = producto.cantidad * producto.precio
 
+    obtener_producto_excel()
     context = {'categorias': categorias, 'productos': productos, 'categoria_filter': categoria_filter, 'producto_modal': None}
 
     return render(request, 'bodega.html', context)
@@ -55,38 +60,37 @@ def view_productos(request):
 def view_create_productos(request):
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
-    unidades = Unidad.objects.filter(categoria_unidad_id=1)
+    unidades = Unidad.objects.all()
     return render(request, 'productos.html', {'productos': productos, 'categorias': categorias, 'unidades': unidades})
 
 @admin_required
 def view_create_existing_productos(request):
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
-    unidades = Unidad.objects.filter(categoria_unidad_id=1)
+    unidades = Unidad.objects.all()
     return render(request, 'productosEx.html', {'productos': productos, 'categorias': categorias, 'unidades': unidades})
 
 @login_required
 def view_productos_output(request):
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
-    unidades = Unidad.objects.filter(categoria_unidad_id=2)
     form = SolicitudForm()
 
-    return render(request, 'salidaProd.html', {'productos': productos, 'categorias': categorias, 'unidades': unidades, 'form': form})
+    return render(request, 'salidaProd.html', {'productos': productos, 'categorias': categorias,'form': form})
 
 @login_required
 def view_units(request):
     unidades = Unidad.objects.all()
     perfiles = UserProfile.objects.all()
-    categorias = CategoriaUnidad.objects.all()
-    return render(request, 'unidades.html', {'unidades': unidades, 'categorias': categorias, 'perfiles': perfiles})
+    return render(request, 'unidades.html', {'unidades': unidades, 'perfiles': perfiles})
 
 @login_required
 def view_solicitudes(request):
     if not request.user.is_staff:
-        return redirect('/bodega/productos')
+        return redirect('view_productos')
 
     solicitudes_pendientes = Solicitud.objects.filter(estado='pendiente')
+    
     return render(request, 'solicitudes.html', {'solicitudes_pendientes': solicitudes_pendientes})
 
 @admin_required
@@ -97,7 +101,7 @@ def create_producto(request):
         precios = request.POST.getlist('precio[]')
         cantidades = request.POST.getlist('cantidad[]')
         categorias_ids = request.POST.getlist('categoria[]')
-        proveedores_ids = request.POST.getlist('proveedores[]')
+        proveedores_ids = request.POST.getlist('proveedor[]')
 
         historial = Historial.objects.create(fecha=datetime.now())
 
@@ -122,10 +126,11 @@ def create_producto(request):
                 unidad=producto.proveedores.first()
             )
 
-        return redirect('/bodega/productos')
+        obtener_producto_excel()
 
-    proveedores = Unidad.objects.filter(id__in=proveedores_ids)
-    return render(request, 'bodega.html', {'proveedores': proveedores})
+        return redirect('view_productos')
+
+    return render(request, 'bodega.html')
 
 @admin_required
 def create_existing_productos(request):
@@ -135,28 +140,37 @@ def create_existing_productos(request):
         productos_data = request.POST.getlist('productos[]')
         precios = request.POST.getlist('precios[]')
         cantidades = request.POST.getlist('cantidades[]')
+        proveedores_id = request.POST.getlist('proveedores[]')
 
         historial = Historial.objects.create(fecha=datetime.now())
 
-        for producto_id, nuevo_precio, cantidad in zip(productos_data, precios, cantidades):
+        for producto_id, nuevo_precio, cantidad, proveedor in zip(productos_data, precios, cantidades, proveedores_id):
             producto_existente = Producto.objects.get(id=producto_id)
-
+            unidad = Unidad.objects.get(id=proveedor)
             detalle_historial = DetallesHistorial(
                 historial=historial,
                 producto=producto_existente,
                 nombre_producto=producto_existente.nombre_producto,
                 cantidad=int(cantidad),
-                precio_unitario=float(nuevo_precio)
+                unidad=unidad
             )
-            detalle_historial.save()
+            if nuevo_precio:
+                try:
+                    detalle_historial.precio_unitario = float(nuevo_precio)
+                    producto_existente.precio = float(nuevo_precio)
+                except ValueError:
+                    detalle_historial.precio_unitario = producto_existente.precio
+            else:
+                detalle_historial.precio_unitario = producto_existente.precio
 
-            producto_existente.precio = float(nuevo_precio)
+            detalle_historial.save()
             producto_existente.cantidad += int(cantidad)
             producto_existente.save()
 
-        return redirect('/bodega/productos')
+        return redirect('view_productos')
 
     return render(request, 'bodega.html', {'productos': productos})
+
 
 @login_required   
 def producto_output(request):
@@ -187,16 +201,12 @@ def producto_output(request):
 def create_unit(request):
     if request.method == 'POST':
         nombre_unidad = request.POST.get('nombre_unidad')
-        categoria_unidad_id = request.POST.get('categoria_unidad')
-
-        categoria_unidad = CategoriaUnidad.objects.get(id=categoria_unidad_id)
 
         Unidad.objects.create(
-            nombre_Unidad=nombre_unidad,
-            categoria_unidad=categoria_unidad
+            nombre_Unidad=nombre_unidad
         )
 
-        return redirect('../unidades')
+        return redirect('view_unidades')
 
     return render(request, 'unidades.html')
 
@@ -275,10 +285,72 @@ def modificar_cantidad(request, solicitud_id, producto_id):
 
 @admin_required
 def delete_solicitud(request, solicitud_id):
-    solicitudes = get_object_or_404(DetalleSolicitud, id=solicitud_id)
+    solicitud = get_object_or_404(Solicitud, id=solicitud_id)
 
     if request.method == 'POST':
-        solicitudes.delete()
+        solicitud.delete()
         return redirect('view_solicitudes')
 
-    return render(request, 'solicitudes.html', {'solicitudes': solicitudes})
+    return render(request, 'solicitudes.html', {'solicitud': solicitud})
+
+def obtener_producto_excel():
+
+    productos = Producto.objects.all()
+
+    datos = {
+            'Nombre': [producto.nombre_producto for producto in productos],
+            'Descripcion': [producto.descripcion for producto in productos],
+            'Precio': [producto.precio for producto in productos],
+            'Cantidad': [producto.cantidad for producto in productos],
+            'Categoria': [producto.categoria.nombre_categoria for producto in productos],
+            'Proveedores': [', '.join([proveedores.nombre_Unidad for proveedores in producto.proveedores.all()]) for producto in productos]
+    }
+
+    dataF = pd.DataFrame(datos)
+
+    ruta_excel = 'productos.xlsx'
+    dataF.to_excel(ruta_excel, index=False)
+
+def descargar_historial(request):
+    # Obtener datos del historial
+    historiales = Historial.objects.all()
+
+    # Crear un nuevo libro de trabajo de Excel
+    wb = Workbook()
+
+    # Agregar datos del historial al libro de trabajo
+    ws = wb.active
+    ws.append(['Fecha', 'Receptor', 'Nombre Producto', 'Cantidad', 'Precio Unitario', 'Unidad'])
+
+    for historial in historiales:
+        detalles = DetallesHistorial.objects.filter(historial=historial)
+        for detalle in detalles:
+            ws.append([historial.fecha, historial.receptor.username, detalle.nombre_producto, detalle.cantidad, detalle.precio_unitario, detalle.unidad])
+
+    # Ajustar automáticamente el ancho de las columnas y el alto de las filas (opcional)
+    for column in ws.columns:
+        max_length = 0
+        column = [cell for cell in column]
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2)
+        ws.column_dimensions[column[0].column_letter].width = adjusted_width
+
+    for row in ws.iter_rows():
+        for cell in row:
+            cell.alignment = cell.alignment.copy(wrap_text=True)
+
+    # Guardar el archivo Excel
+    excel_file_path = 'historial.xlsx'
+    wb.save(excel_file_path)
+
+    # Devolver el archivo Excel como respuesta
+    with open(excel_file_path, 'rb') as excel_file:
+        response = HttpResponse(excel_file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=historial.xlsx'
+
+    return response
