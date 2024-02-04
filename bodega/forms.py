@@ -64,8 +64,6 @@ class ProductoForm(forms.ModelForm):
         self.fields['cantidad'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Cantidad'})
         self.fields['precio'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Precio'})
 
-        self.fields['proveedores'].queryset = Unidad.objects.filter(categoria_unidad=1)
-
         self.fields['proveedores'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Proveedor'})
 
 
@@ -81,3 +79,20 @@ class SolicitudForm(forms.ModelForm):
     )
 
     cantidades = forms.CharField()
+
+class UnidadForm(forms.ModelForm):
+    class Meta:
+        model = Unidad
+        fields = ['nombre_Unidad']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.helper = FormHelper()
+
+        self.helper.layout = Layout(
+            'nombre_Unidad',
+            Submit('submit', 'Guardar', css_class='btn-primary')
+        )
+
+        self.fields['nombre_Unidad'].widget = forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del producto'})

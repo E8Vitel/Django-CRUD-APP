@@ -28,18 +28,18 @@
                 <div class="producto p-3 bg-body-tertiary">
                     <div class="mb-3">
                         <label for="nombreProducto1" class="form-label">Nombre del Producto</label>
-                        <input type="text" class="form-control" id="nombreProducto1" name="nombreProducto[]" required>
+                        <input type="text" class="form-control" id="nombreProducto1" name="nombreProducto" required>
                     
                         <label for="descripcion1" class="form-label mt-3">Descripción</label>
-                        <textarea class="form-control" id="descripcion1" name="description[]" rows="4"></textarea>
+                        <textarea class="form-control" id="descripcion1" name="descripcion" rows="4"></textarea>
                     </div>
 
                     <div class="mb-3" >
                         <label for="precio1" class="form-label">Precio</label>
-                        <input type="number" class="form-control w-50" id="precio1" name="precio[]" required min="0">
+                        <input type="number" class="form-control w-50" id="precio1" name="precio" required min="0">
 
                         <label for="categoria1" class="form-label mt-3">Categoría</label>
-                        <select class="form-select" id="categoria1" name="categoria[]" required>
+                        <select class="form-select" id="categoria1" name="categoria" required>
                             <option value="select-categoria">--Seleccione una categoria--</option>
                             {% for categoria in categorias %}
                             <option value="{{ categoria.id }}">{{ categoria.nombre_categoria }}</option>
@@ -48,12 +48,12 @@
                     </div>
                     <div class="mb-3">
                         <label for="cantidad1" class="form-label">Cantidad</label>
-                        <input type="number" class="form-control w-50" id="cantidad1" name="cantidad[]" required min="0">
+                        <input type="number" class="form-control w-50" id="cantidad1" name="cantidad" required min="0">
 
                         <label for="proveedor1" class="form-label mt-3">Proveedores</label>
                         {% for unidad in unidades %}
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="proveedor{{ unidad.id }}" name="proveedor[]" value="{{ unidad.id }}">
+                                <input type="checkbox" class="form-check-input" id="proveedor{{ unidad.id }}" name="proveedores" value="{{ unidad.id }}">
                                 <label class="form-check-label" for="proveedor{{ unidad.id }}">{{ unidad.nombre_Unidad }}</label>
                             </div>
                         {% endfor %}

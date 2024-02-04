@@ -1,0 +1,36 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'css/estiloproducto.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nav.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'js/forms.js' %}"></script>
+    <title>Editar Unidad</title>
+</head>
+<body>
+
+    {% include 'navbar.html' %}
+    
+    <div class="container shadow-sm p-3 mt-5 w-50 bg-body-tertiary rounded">
+        <h1 class="text-center titulo-agregar">Editar Unidad</h1>
+        <hr class="separador">
+        <form method="POST" class="needs-validation" novalidate>
+            {% csrf_token %}
+                {% crispy form %}
+        </form>
+    </div>
+    
+    <footer class="p-3 bg-body-tertiary mt-5 bg-light">
+        <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
+    </footer>
+</body>
+</html>

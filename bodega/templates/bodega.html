@@ -130,11 +130,12 @@
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             
                 {% if user.is_staff %}
-            <li><a class="dropdown-item" href="crear/nuevo">Agregar Producto</a></li>
-            <li><a class="dropdown-item" href="crear/existente">Agregar Stock de Producto</a></li>
-            <li><a class="dropdown-item" href="crear/salida">Registrar Salida de Productos</a></li>
+            <li><a class="dropdown-item" href="{% url 'view_create_productos' %}">Agregar Producto</a></li>
+            <li><a class="dropdown-item" href="{% url 'view_existing_productos' %}">Agregar Stock de Producto</a></li>
+            <li><a class="dropdown-item" href="{% url 'view_productos_output' %}">Registrar Salida de Productos</a></li>
+            <li><a class="dropdown-item" href="{% url 'descargar_productos' %}">Descargar plantilla de productos</a></li>
                 {% else %}
-            <li><a class="dropdown-item" href="crear/salida">Solicitar Productos</a></li>
+            <li><a class="dropdown-item" href="{% url 'view_productos_output' %}">Solicitar Productos</a></li>
                 {% endif %}
             
         </ul>

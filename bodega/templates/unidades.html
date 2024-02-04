@@ -27,6 +27,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Unidad</th>
+                        <th scope="col">Gasto Mensual</th>
                         <th scope="col">Gasto total</th>
                     </tr>
                 </thead>
@@ -34,13 +35,14 @@
                     {% for perfil in perfiles %}
                         <tr>
                             <td>{{ perfil.user.username }}</td>
+                            <td>{{ perfil.gasto_mensual }}</td>
                             <td>{{ perfil.gasto_acumulado }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    
+    {% if user.is_staff %}
         <div class="ml-3">
             <h2>Proveedores</h2>
     
@@ -48,19 +50,30 @@
                 <thead>
                     <tr>
                         <th scope="col">Proveedor</th>
+                        <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for unidad in unidades %}
                         <tr>
                             <td>{{ unidad.nombre_Unidad }}</td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <a href="{% url 'edit_unidad' unidad.id %}" class="btn btn-primary mb-2">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarUnidadModal{{ unidad.id }}">
+                                        <i class="material-icons">delete</i>
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-
+    
     <button class="btn btn-primary floating-button" data-bs-toggle="modal" data-bs-target="#crearUnidadModal">Crear Unidad</button>
 
     <div class="modal fade" id="crearUnidadModal" tabindex="-1" aria-labelledby="crearUnidadModalLabel" aria-hidden="true">
@@ -86,6 +99,35 @@
         </div>
     </div>
     
+
+    {% for unidad in unidades %}
+    <div class="modal fade" id="eliminarUnidadModal{{ unidad.id }}" tabindex="-1" aria-labelledby="eliminarUnidadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarUnidadModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'delete_unidad' unidad.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar el proveedor: "{{ unidad.nombre_Unidad }}"?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        {% if unidad.id %}
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        {% else %}
+                            <button type="button" class="btn btn-danger" disabled>Eliminar</button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    {% endfor %}
+    {% endif %}
     <footer class="p-3 bg-body-tertiary mt-5 bg-light">
         <p class="text-center">Derechos de autor © 2024 CEM Ovalle</p>
     </footer>
