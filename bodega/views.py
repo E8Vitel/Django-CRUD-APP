@@ -143,14 +143,20 @@ def create_existing_productos(request):
     if request.method == 'POST':
         productos_data = request.POST.getlist('productos[]')
         precios = request.POST.getlist('precios[]')
+        cantidad_cajas = request.POST.getlist('cajas[]')
         cantidades = request.POST.getlist('cantidades[]')
         proveedores_id = request.POST.getlist('proveedores[]')
 
         historial = Historial.objects.create(fecha=datetime.now())
 
-        for producto_id, nuevo_precio, cantidad, proveedor in zip(productos_data, precios, cantidades, proveedores_id):
+        for producto_id, nuevo_precio, cajas, cantidad, proveedor in zip(productos_data, precios, cantidad_cajas, cantidades, proveedores_id):
             producto_existente = Producto.objects.get(id=producto_id)
             unidad = Unidad.objects.get(id=proveedor)
+            if cajas:
+                cantidad = int(cantidad) * int(cajas)
+            else:
+                cantidad = int(cantidad)
+
             detalle_historial = DetallesHistorial(
                 historial=historial,
                 producto=producto_existente,
@@ -184,9 +190,13 @@ def producto_output(request):
 
         productos_seleccionados = request.POST.getlist('productos')
         cantidades = request.POST.getlist('cantidades')
+        cajas = request.POST.getlist('cajas')
 
-        for producto_id, cantidad in zip(productos_seleccionados, cantidades):
-            cantidad = int(cantidad)
+        for producto_id, cajas, cantidad in zip(productos_seleccionados, cajas, cantidades):
+            if cajas:
+                cantidad = int(cantidad) * int(cajas)
+            else:
+                cantidad = int(cantidad)
             if cantidad > 0:
                 producto = Producto.objects.get(pk=producto_id)
                 DetalleSolicitud.objects.create(

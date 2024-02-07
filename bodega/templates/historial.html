@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -38,12 +38,12 @@
                                         {% else %}
                                             {{ detalle.nombre_producto }}
                                         {% endif %}
-                                        - Precio Unitario: ${{ detalle.precio_unitario|floatformat:0 }} 
+                                        - Precio Unitario: ${{ detalle.precio_unitario|intcomma }} 
                                         {% if detalle.historial.receptor %}
                                             - Cantidad enviada: {{ detalle.cantidad }} 
                                             - Receptor: {{ detalle.historial.receptor }}
                                         {% else %}
-                                            - Cantidad: {{ detalle.cantidad }}
+                                            - Cantidad ingresada: {{ detalle.cantidad }}
                                             {% if detalle.unidad %} 
                                             - Proveedor: {{ detalle.unidad }}
                                             {% else %}

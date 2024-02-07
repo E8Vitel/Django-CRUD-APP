@@ -7,6 +7,7 @@ $(document).ready(function () {
         nuevoProducto.find("input, select").val("");
         nuevoProducto.find(".productos").attr("name", "productos[]");
         nuevoProducto.find(".precios").attr("name", "precios[]");
+        nuevoProducto.find(".cajas").attr("name", "cajas[]");
         nuevoProducto.find(".cantidades").attr("name", "cantidades[]");
 
         nuevoProducto.append('<button type="button" class="eliminarProducto btn btn-danger" onclick="eliminarProducto(this)"><i class="material-icons">remove</i></button>');

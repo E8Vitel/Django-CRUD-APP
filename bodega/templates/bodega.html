@@ -1,5 +1,6 @@
 {% load static %}
 {% if user.is_authenticated %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -38,11 +39,11 @@
 
     
     {% if messages %}
-    <div class="toast-container alert alert-success position-fixed bottom-0 start-0 p-3">
+    <div class="toast-container position-fixed top-0 start-0 p-3">
         {% for message in messages %}
-            <div class="toast align-items-center text-black {{ message.tags }}" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast alert alert-success align-items-center text-black {{ message.tags }}" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
-                    <div class="toast-body">
+                    <div class="toast-body ">
                         {{ message }}
                     </div>
                     <button type="button" class="btn-close btn-close-black me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -95,8 +96,8 @@
                                 {{ producto.cantidad }}
                             {% endif %}
                         </td>
-                        <td>${{ producto.precio|floatformat:0 }}</td>
-                        <td>${{ producto.precio_total|floatformat:0 }}</td>
+                        <td>${{ producto.precio|floatformat:0|intcomma }}</td>
+                        <td>${{ producto.precio_total|floatformat:0|intcomma }}</td>
                         <td>{{ producto.categoria.nombre_categoria }}</td> 
                         <td>
                             {% for proveedor in producto.proveedores.all %}
