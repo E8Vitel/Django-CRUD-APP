@@ -1,1 +1,1 @@
-Este es un proyecto que hice en mi practica de trabajo, es una aplicacion web con un CRUD simple con django y postgresql como base de datos
+This is a project i made when i was doing an internship, it's a simple CRUD app web with Django and PostgreSQL as my BD.
